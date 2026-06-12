@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Carga de Combustible</title>
+<style>
+  :root{
+    --verde:#2e7d32;
+    --verde-claro:#43a047;
+    --naranja:#ef6c00;
+    --gris:#e0e0e0;
+    --gris-oscuro:#757575;
+    --texto:#212121;
+    --fondo:#f4f6f4;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family: -apple-system, Roboto, Arial, sans-serif;
+    background:var(--fondo);
+    color:var(--texto);
+    min-height:100vh;
+    padding-bottom:90px;
+  }
+  .pantalla{display:none; max-width:520px; margin:0 auto; padding:16px;}
+  .pantalla.activa{display:block;}
+
+  /* Header */
+  .header{
+    background:var(--verde);
+    color:#fff;
+    padding:16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    position:sticky;
+    top:0;
+    z-index:50;
+  }
+  .header h1{
+    font-size:1.4rem;
+    margin:0;
+    text-align:center;
+    flex:1;
+  }
+  .btn-volver{
+    background:rgba(255,255,255,0.2);
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    padding:12px 16px;
+    font-size:1.1rem;
+    font-weight:bold;
+    cursor:pointer;
+  }
+  .header-spacer{width:90px;}
+
+  /* Labels y campos */
+  label{
+    display:block;
+    font-size:1.3rem;
+    font-weight:bold;
+    margin:18px 0 8px 0;
+  }
+  input[type="text"], input[type="date"]{
+    width:100%;
+    font-size:1.5rem;
+    padding:14px;
+    border:2px solid var(--gris);
+    border-radius:12px;
+    background:#fff;
+    color:var(--texto);
+  }
+  input[type="text"]:focus, input[type="date"]:focus{
+    border-color:var(--verde);
+    outline:none;
+  }
+
+  /* Chips de usuarios recientes */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+  .chip{
+    background:#fff;
+    border:2px solid var(--gris);
+    border-radius:20px;
+    padding:8px 16px;
+    font-size:1.1rem;
+    cursor:pointer;
+  }
+  .chip.activo{border-color:var(--verde); background:#e8f5e9; font-weight:bold;}
+
+  /* Botones grandes seleccionables */
+  .opciones{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:8px;
+  }
+  .opciones.una-col{grid-template-columns:1fr;}
+  .btn-opcion{
+    font-size:1.3rem;
+    font-weight:bold;
+    padding:20px 10px;
+    border:3px solid var(--gris);
+    border-radius:14px;
+    background:#fff;
+    color:var(--texto);
+    cursor:pointer;
+    text-align:center;
+    transition:all .15s ease;
+  }
+  .btn-opcion.seleccionado{
+    border-color:var(--verde);
+    background:var(--verde);
+    color:#fff;
+  }
+
+  /* Boton principal */
+  .btn-principal{
+    width:100%;
+    font-size:1.6rem;
+    font-weight:bold;
+    padding:22px;
+    border:none;
+    border-radius:14px;
+    background:var(--verde);
+    color:#fff;
+    margin-top:30px;
+    cursor:pointer;
+  }
+  .btn-principal:active{background:var(--verde-claro);}
+
+  .error{
+    color:#c62828;
+    font-size:1.1rem;
+    font-weight:bold;
+    margin-top:14px;
+    text-align:center;
+    display:none;
+  }
+
+  /* Resumen pantalla 2 */
+  .resumen{
+    background:#fff;
+    border-radius:14px;
+    padding:14px 18px;
+    margin:16px 0;
+    font-size:1.15rem;
+    border:2px solid var(--gris);
+    line-height:1.6;
+  }
+  .resumen b{color:var(--verde);}
+
+  /* Grid de maquinas */
+  .maquinas{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-top:10px;
+  }
+  .btn-maquina{
+    font-size:1.35rem;
+    font-weight:bold;
+    padding:22px 16px;
+    border:3px solid var(--gris);
+    border-radius:14px;
+    background:#fff;
+    color:var(--texto);
+    cursor:pointer;
+    text-align:left;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .btn-maquina .valor{
+    font-size:1.2rem;
+    font-weight:normal;
+  }
+  .btn-maquina.completo{
+    border-color:var(--verde);
+    background:#e8f5e9;
+  }
+  .btn-maquina.completo .valor{
+    color:var(--verde);
+    font-weight:bold;
+  }
+
+  /* Boton guardar fijo abajo */
+  .footer-guardar{
+    position:fixed;
+    bottom:0; left:0; right:0;
+    background:var(--fondo);
+    padding:14px 16px;
+    box-shadow:0 -4px 10px rgba(0,0,0,0.08);
+    z-index:60;
+  }
+  .footer-guardar .max{max-width:520px; margin:0 auto;}
+  .btn-guardar{
+    width:100%;
+    font-size:1.6rem;
+    font-weight:bold;
+    padding:20px;
+    border:none;
+    border-radius:14px;
+    background:var(--naranja);
+    color:#fff;
+    cursor:pointer;
+  }
+  .btn-guardar:active{opacity:0.85;}
+
+  /* Overlay y panel inferior */
+  .overlay{
+    position:fixed; top:0; left:0; right:0; bottom:0;
+    background:rgba(0,0,0,0.5);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease;
+    z-index:100;
+  }
+  .overlay.abierto{opacity:1; pointer-events:auto;}
+
+  .panel{
+    position:fixed;
+    left:0; right:0; bottom:0;
+    background:#fff;
+    border-radius:20px 20px 0 0;
+    padding:24px;
+    transform:translateY(100%);
+    transition:transform .3s ease;
+    z-index:101;
+    max-width:520px;
+    margin:0 auto;
+    box-shadow:0 -2px 20px rgba(0,0,0,0.2);
+  }
+  .panel.abierto{transform:translateY(0);}
+  .panel h2{
+    margin:0 0 16px 0;
+    font-size:1.5rem;
+    text-align:center;
+    color:var(--verde);
+  }
+  .panel-input{
+    width:100%;
+    font-size:3.2rem;
+    text-align:center;
+    padding:18px;
+    border:3px solid var(--verde);
+    border-radius:14px;
+    color:var(--texto);
+    margin-bottom:8px;
+  }
+  .panel-unidad{
+    text-align:center;
+    font-size:1.2rem;
+    color:var(--gris-oscuro);
+    margin-bottom:18px;
+  }
+  .btn-listo{
+    width:100%;
+    font-size:1.6rem;
+    font-weight:bold;
+    padding:18px;
+    border:none;
+    border-radius:14px;
+    background:var(--verde);
+    color:#fff;
+    cursor:pointer;
+  }
+
+  /* Toast */
+  .toast{
+    position:fixed;
+    top:90px;
+    left:16px; right:16px;
+    max-width:488px;
+    margin:0 auto;
+    background:var(--verde);
+    color:#fff;
+    text-align:center;
+    font-size:1.2rem;
+    font-weight:bold;
+    padding:16px;
+    border-radius:12px;
+    z-index:200;
+    opacity:0;
+    transform:translateY(-20px);
+    transition:all .3s ease;
+    pointer-events:none;
+  }
+  .toast.mostrar{opacity:1; transform:translateY(0);}
+  .toast.error-toast{background:#c62828;}
+
+  /* Indicador pendientes */
+  .pendientes{
+    font-size:0.95rem;
+    color:#fff;
+    background:rgba(255,255,255,0.2);
+    border-radius:10px;
+    padding:6px 10px;
+    text-align:center;
+    margin-top:6px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== PANTALLA 1 ===================== -->
+<div class="pantalla activa" id="pantalla1">
+  <div class="header">
+    <div class="header-spacer"></div>
+    <h1>🚜 Carga de Combustible</h1>
+    <div class="header-spacer"></div>
+  </div>
+
+  <div style="padding:0 16px;">
+    <label for="usuario">Nombre de quien registra</label>
+    <input type="text" id="usuario" placeholder="Escribí tu nombre" autocomplete="off">
+    <div class="chips" id="chipsUsuarios"></div>
+
+    <label for="fecha">Fecha</label>
+    <input type="date" id="fecha">
+
+    <label>Tipo de carga</label>
+    <div class="opciones" id="opcionesTipoCarga">
+      <button class="btn-opcion" data-valor="Gasoil">⛽ Gasoil</button>
+      <button class="btn-opcion" data-valor="Aceite">🛢️ Aceite</button>
+    </div>
+
+    <label>Tipo de máquina / equipo</label>
+    <div class="opciones" id="opcionesTipoMaquina">
+      <button class="btn-opcion" data-valor="Tractores">🚜 Tractores</button>
+      <button class="btn-opcion" data-valor="Pulverizadora">🌾 Pulverizadora</button>
+      <button class="btn-opcion" data-valor="Cosechadora">🌽 Cosechadora</button>
+      <button class="btn-opcion" data-valor="Vehículo">🚗 Vehículo</button>
+    </div>
+
+    <div class="error" id="errorPantalla1">Completá tu nombre, la fecha, el tipo de carga y el tipo de máquina antes de continuar.</div>
+
+    <button class="btn-principal" id="btnContinuar">Cargar combustible ➜</button>
+  </div>
+</div>
+
+<!-- ===================== PANTALLA 2 ===================== -->
+<div class="pantalla" id="pantalla2">
+  <div class="header">
+    <button class="btn-volver" id="btnVolver">← Volver</button>
+    <h1>Equipos</h1>
+    <div class="header-spacer"></div>
+  </div>
+
+  <div style="padding:0 16px;">
+    <div class="resumen" id="resumenSeleccion"></div>
+
+    <div class="maquinas" id="listaMaquinas"></div>
+  </div>
+
+  <div class="footer-guardar">
+    <div class="max">
+      <button class="btn-guardar" id="btnGuardar">💾 Guardar Registro</button>
+      <div class="pendientes" id="pendientesInfo" style="display:none; background:#fdecea; color:#c62828;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PANEL INFERIOR (LITROS) ===================== -->
+<div class="overlay" id="overlay"></div>
+<div class="panel" id="panelLitros">
+  <h2 id="panelTitulo">Máquina</h2>
+  <input type="number" inputmode="decimal" class="panel-input" id="panelInput" placeholder="0" min="0" step="0.1">
+  <div class="panel-unidad">litros</div>
+  <button class="btn-listo" id="btnListo">✓ Listo</button>
+</div>
+
+<!-- ===================== TOAST ===================== -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==================== CONFIGURACIÓN ==================== */
+// Pegar aquí la URL de la implementación del Google Apps Script (Aplicación web)
+const SCRIPT_URL = "PEGAR_AQUI_LA_URL_DE_TU_APPS_SCRIPT";
+
+/* ==================== DATOS DE MÁQUINAS ==================== */
+const MAQUINAS = {
+  "Tractores": ["JD 6165","JD 6115","JD 5085","JD 5080","MASEY 650","FIAT 780 NARANJA","FIAT 780 MARRON","FHAR 45 ROJO","FHAR 30 VERDE"],
+  "Pulverizadora": ["PLA 2909"],
+  "Cosechadora": ["DON ROQUE 150","VASSALLI 910"],
+  "Vehículo": ["TOYOTA HILUX","MULA MITSUBISHI","GENERADOR TAMBO","GAS OIL QUEMA","GAS OIL A TERCEROS"]
+};
+
+/* ==================== ESTADO ==================== */
+let estado = {
+  usuario: "",
+  fecha: "",
+  tipoCarga: "",
+  tipoMaquina: "",
+  cargas: {} // { "JD 6165": 45.5, ... }
+};
+
+let maquinaActual = null; // máquina que se está editando en el panel
+
+/* ==================== ELEMENTOS ==================== */
+const pantalla1 = document.getElementById('pantalla1');
+const pantalla2 = document.getElementById('pantalla2');
+const inputUsuario = document.getElementById('usuario');
+const inputFecha = document.getElementById('fecha');
+const chipsUsuarios = document.getElementById('chipsUsuarios');
+const opcionesTipoCarga = document.getElementById('opcionesTipoCarga');
+const opcionesTipoMaquina = document.getElementById('opcionesTipoMaquina');
+const errorPantalla1 = document.getElementById('errorPantalla1');
+const btnContinuar = document.getElementById('btnContinuar');
+const btnVolver = document.getElementById('btnVolver');
+const resumenSeleccion = document.getElementById('resumenSeleccion');
+const listaMaquinas = document.getElementById('listaMaquinas');
+const btnGuardar = document.getElementById('btnGuardar');
+const overlay = document.getElementById('overlay');
+const panelLitros = document.getElementById('panelLitros');
+const panelTitulo = document.getElementById('panelTitulo');
+const panelInput = document.getElementById('panelInput');
+const btnListo = document.getElementById('btnListo');
+const toast = document.getElementById('toast');
+const pendientesInfo = document.getElementById('pendientesInfo');
+
+/* ==================== INICIALIZACIÓN ==================== */
+function hoyISO(){
+  const d = new Date();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const dia = String(d.getDate()).padStart(2,'0');
+  return `${d.getFullYear()}-${m}-${dia}`;
+}
+inputFecha.value = hoyISO();
+
+function cargarUsuariosRecientes(){
+  const lista = JSON.parse(localStorage.getItem('usuarios_recientes') || '[]');
+  chipsUsuarios.innerHTML = '';
+  lista.forEach(nombre => {
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.textContent = nombre;
+    chip.addEventListener('click', () => {
+      inputUsuario.value = nombre;
+      marcarChipActivo(nombre);
+    });
+    chipsUsuarios.appendChild(chip);
+  });
+}
+function marcarChipActivo(nombre){
+  document.querySelectorAll('#chipsUsuarios .chip').forEach(c => {
+    c.classList.toggle('activo', c.textContent === nombre);
+  });
+}
+function guardarUsuarioReciente(nombre){
+  let lista = JSON.parse(localStorage.getItem('usuarios_recientes') || '[]');
+  lista = lista.filter(n => n.toLowerCase() !== nombre.toLowerCase());
+  lista.unshift(nombre);
+  lista = lista.slice(0,5);
+  localStorage.setItem('usuarios_recientes', JSON.stringify(lista));
+  cargarUsuariosRecientes();
+  marcarChipActivo(nombre);
+}
+cargarUsuariosRecientes();
+
+/* ==================== SELECCIÓN DE OPCIONES (pantalla 1) ==================== */
+function configurarSeleccionUnica(contenedor, campoEstado){
+  contenedor.querySelectorAll('.btn-opcion').forEach(btn => {
+    btn.addEventListener('click', () => {
+      contenedor.querySelectorAll('.btn-opcion').forEach(b => b.classList.remove('seleccionado'));
+      btn.classList.add('seleccionado');
+      estado[campoEstado] = btn.dataset.valor;
+    });
+  });
+}
+configurarSeleccionUnica(opcionesTipoCarga, 'tipoCarga');
+configurarSeleccionUnica(opcionesTipoMaquina, 'tipoMaquina');
+
+/* ==================== VALIDACIÓN Y AVANCE A PANTALLA 2 ==================== */
+btnContinuar.addEventListener('click', () => {
+  estado.usuario = inputUsuario.value.trim();
+  estado.fecha = inputFecha.value;
+
+  if(!estado.usuario || !estado.fecha || !estado.tipoCarga || !estado.tipoMaquina){
+    errorPantalla1.style.display = 'block';
+    return;
+  }
+  errorPantalla1.style.display = 'none';
+  guardarUsuarioReciente(estado.usuario);
+
+  // Si cambió el tipo de máquina, se reinician las cargas previas
+  if(estado.tipoMaquinaAnterior !== estado.tipoMaquina){
+    estado.cargas = {};
+  }
+  estado.tipoMaquinaAnterior = estado.tipoMaquina;
+
+  mostrarPantalla2();
+});
+
+/* ==================== PANTALLA 2 ==================== */
+function mostrarPantalla2(){
+  resumenSeleccion.innerHTML = `
+    👤 <b>${escapeHTML(estado.usuario)}</b><br>
+    📅 <b>${formatearFecha(estado.fecha)}</b><br>
+    ${estado.tipoCarga === 'Gasoil' ? '⛽' : '🛢️'} <b>${estado.tipoCarga}</b> &nbsp;|&nbsp; ${iconoMaquina(estado.tipoMaquina)} <b>${estado.tipoMaquina}</b>
+  `;
+
+  listaMaquinas.innerHTML = '';
+  const opciones = MAQUINAS[estado.tipoMaquina] || [];
+  opciones.forEach(nombre => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-maquina';
+    btn.dataset.maquina = nombre;
+    actualizarBotonMaquina(btn, nombre);
+    btn.addEventListener('click', () => abrirPanel(nombre));
+    listaMaquinas.appendChild(btn);
+  });
+
+  pantalla1.classList.remove('activa');
+  pantalla2.classList.add('activa');
+  window.scrollTo(0,0);
+}
+
+function iconoMaquina(tipo){
+  return {Tractores:'🚜', Pulverizadora:'🌾', Cosechadora:'🌽', 'Vehículo':'🚗'}[tipo] || '';
+}
+
+function actualizarBotonMaquina(btn, nombre){
+  const litros = estado.cargas[nombre];
+  if(litros !== undefined){
+    btn.classList.add('completo');
+    btn.innerHTML = `<span>${escapeHTML(nombre)}</span><span class="valor">✓ ${litros} L</span>`;
+  } else {
+    btn.classList.remove('completo');
+    btn.innerHTML = `<span>${escapeHTML(nombre)}</span><span class="valor"></span>`;
+  }
+}
+
+function refrescarListaMaquinas(){
+  listaMaquinas.querySelectorAll('.btn-maquina').forEach(btn => {
+    actualizarBotonMaquina(btn, btn.dataset.maquina);
+  });
+}
+
+/* Volver a pantalla 1 */
+btnVolver.addEventListener('click', () => {
+  pantalla2.classList.remove('activa');
+  pantalla1.classList.add('activa');
+  window.scrollTo(0,0);
+});
+
+/* ==================== PANEL INFERIOR DE LITROS ==================== */
+function abrirPanel(nombreMaquina){
+  maquinaActual = nombreMaquina;
+  panelTitulo.textContent = nombreMaquina;
+  panelInput.value = estado.cargas[nombreMaquina] !== undefined ? estado.cargas[nombreMaquina] : '';
+  overlay.classList.add('abierto');
+  panelLitros.classList.add('abierto');
+  setTimeout(() => panelInput.focus(), 200);
+}
+function cerrarPanel(){
+  overlay.classList.remove('abierto');
+  panelLitros.classList.remove('abierto');
+  panelInput.blur();
+  maquinaActual = null;
+}
+overlay.addEventListener('click', cerrarPanel);
+
+btnListo.addEventListener('click', () => {
+  const valor = parseFloat(panelInput.value);
+  if(maquinaActual){
+    if(!isNaN(valor) && valor > 0){
+      estado.cargas[maquinaActual] = valor;
+    } else {
+      delete estado.cargas[maquinaActual];
+    }
+    refrescarListaMaquinas();
+  }
+  cerrarPanel();
+});
+
+/* ==================== GUARDAR REGISTRO ==================== */
+btnGuardar.addEventListener('click', () => {
+  const items = Object.keys(estado.cargas);
+  if(items.length === 0){
+    mostrarToast('Cargá los litros de al menos un equipo antes de guardar.', true);
+    return;
+  }
+
+  const registros = items.map(maquina => ({
+    usuario: estado.usuario,
+    fecha: estado.fecha,
+    tipoCarga: estado.tipoCarga,
+    tipoMaquina: estado.tipoMaquina,
+    maquina: maquina,
+    litros: estado.cargas[maquina]
+  }));
+
+  encolarRegistros(registros);
+  mostrarToast('✅ Registro guardado correctamente');
+
+  // Reiniciar cargas y volver a pantalla 1 para un nuevo registro
+  estado.cargas = {};
+  refrescarListaMaquinas();
+  setTimeout(() => {
+    pantalla2.classList.remove('activa');
+    pantalla1.classList.add('activa');
+    window.scrollTo(0,0);
+  }, 900);
+});
+
+/* ==================== ENVÍO A GOOGLE SHEETS (con cola sin conexión) ==================== */
+function encolarRegistros(registros){
+  let pendientes = JSON.parse(localStorage.getItem('pendientes_envio') || '[]');
+  pendientes = pendientes.concat(registros);
+  localStorage.setItem('pendientes_envio', JSON.stringify(pendientes));
+  actualizarIndicadorPendientes();
+  intentarSincronizar();
+}
+
+function intentarSincronizar(){
+  let pendientes = JSON.parse(localStorage.getItem('pendientes_envio') || '[]');
+  if(pendientes.length === 0) return;
+  if(!SCRIPT_URL || SCRIPT_URL.indexOf('PEGAR_AQUI') !== -1) return;
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+    body: JSON.stringify({registros: pendientes})
+  })
+  .then(r => r.json())
+  .then(res => {
+    if(res && res.status === 'ok'){
+      localStorage.setItem('pendientes_envio', '[]');
+      actualizarIndicadorPendientes();
+    }
+  })
+  .catch(() => { /* sin conexión: se reintentará más tarde */ });
+}
+
+function actualizarIndicadorPendientes(){
+  const pendientes = JSON.parse(localStorage.getItem('pendientes_envio') || '[]');
+  if(pendientes.length > 0){
+    pendientesInfo.style.display = 'block';
+    pendientesInfo.textContent = `⏳ ${pendientes.length} registro(s) sin sincronizar. Se enviarán solos cuando haya conexión.`;
+  } else {
+    pendientesInfo.style.display = 'none';
+  }
+}
+actualizarIndicadorPendientes();
+intentarSincronizar();
+window.addEventListener('online', intentarSincronizar);
+
+/* ==================== UTILIDADES ==================== */
+function mostrarToast(mensaje, esError){
+  toast.textContent = mensaje;
+  toast.classList.toggle('error-toast', !!esError);
+  toast.classList.add('mostrar');
+  setTimeout(() => toast.classList.remove('mostrar'), 2500);
+}
+
+function escapeHTML(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function formatearFecha(iso){
+  if(!iso) return '';
+  const [a,m,d] = iso.split('-');
+  return `${d}/${m}/${a}`;
+}
+</script>
+</body>
+</html>
