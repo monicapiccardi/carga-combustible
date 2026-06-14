@@ -267,6 +267,24 @@
     cursor:pointer;
   }
 
+  /* Campo de nota (Gasoil a terceros) */
+  .panel-nota-wrap{margin-bottom:18px;}
+  .panel-nota-wrap label{
+    font-size:1rem;
+    font-weight:bold;
+    margin:0 0 8px 0;
+  }
+  #panelNota{
+    width:100%;
+    font-size:1.2rem;
+    padding:12px;
+    border:2px solid var(--gris);
+    border-radius:12px;
+    background:#fff;
+    color:var(--texto);
+  }
+  #panelNota:focus{border-color:var(--verde); outline:none;}
+
   /* Toast */
   .toast{
     position:fixed;
@@ -368,6 +386,10 @@
   <h2 id="panelTitulo">Máquina</h2>
   <input type="number" inputmode="decimal" class="panel-input" id="panelInput" placeholder="0" min="0" step="0.1">
   <div class="panel-unidad">litros</div>
+  <div class="panel-nota-wrap" id="panelNotaWrap" style="display:none;">
+    <label for="panelNota">¿Para quién? (opcional)</label>
+    <input type="text" id="panelNota" placeholder="Nombre o destino" autocomplete="off">
+  </div>
   <button class="btn-listo" id="btnListo">✓ Listo</button>
 </div>
 
@@ -393,7 +415,8 @@ let estado = {
   fecha: "",
   tipoCarga: "",
   tipoMaquina: "",
-  cargas: {} // { "JD 6165": 45.5, ... }
+  cargas: {}, // { "JD 6165": 45.5, ... }
+  notas: {}   // { "GAS OIL A TERCEROS": "Juan Pérez", ... }
 };
 
 let maquinaActual = null; // máquina que se está editando en el panel
@@ -416,6 +439,8 @@ const overlay = document.getElementById('overlay');
 const panelLitros = document.getElementById('panelLitros');
 const panelTitulo = document.getElementById('panelTitulo');
 const panelInput = document.getElementById('panelInput');
+const panelNotaWrap = document.getElementById('panelNotaWrap');
+const panelNota = document.getElementById('panelNota');
 const btnListo = document.getElementById('btnListo');
 const toast = document.getElementById('toast');
 const pendientesInfo = document.getElementById('pendientesInfo');
@@ -487,6 +512,7 @@ btnContinuar.addEventListener('click', () => {
   // Si cambió el tipo de máquina, se reinician las cargas previas
   if(estado.tipoMaquinaAnterior !== estado.tipoMaquina){
     estado.cargas = {};
+    estado.notas = {};
   }
   estado.tipoMaquinaAnterior = estado.tipoMaquina;
 
@@ -525,7 +551,11 @@ function actualizarBotonMaquina(btn, nombre){
   const litros = estado.cargas[nombre];
   if(litros !== undefined){
     btn.classList.add('completo');
-    btn.innerHTML = `<span>${escapeHTML(nombre)}</span><span class="valor">✓ ${litros} L</span>`;
+    let etiqueta = nombre;
+    if(nombre === 'GAS OIL A TERCEROS' && estado.notas[nombre]){
+      etiqueta += ` (${estado.notas[nombre]})`;
+    }
+    btn.innerHTML = `<span>${escapeHTML(etiqueta)}</span><span class="valor">✓ ${litros} L</span>`;
   } else {
     btn.classList.remove('completo');
     btn.innerHTML = `<span>${escapeHTML(nombre)}</span><span class="valor"></span>`;
@@ -550,6 +580,13 @@ function abrirPanel(nombreMaquina){
   maquinaActual = nombreMaquina;
   panelTitulo.textContent = nombreMaquina;
   panelInput.value = estado.cargas[nombreMaquina] !== undefined ? estado.cargas[nombreMaquina] : '';
+  if(nombreMaquina === 'GAS OIL A TERCEROS'){
+    panelNotaWrap.style.display = 'block';
+    panelNota.value = estado.notas[nombreMaquina] || '';
+  } else {
+    panelNotaWrap.style.display = 'none';
+    panelNota.value = '';
+  }
   overlay.classList.add('abierto');
   panelLitros.classList.add('abierto');
   setTimeout(() => panelInput.focus(), 200);
@@ -558,6 +595,7 @@ function cerrarPanel(){
   overlay.classList.remove('abierto');
   panelLitros.classList.remove('abierto');
   panelInput.blur();
+  panelNota.blur();
   maquinaActual = null;
 }
 overlay.addEventListener('click', cerrarPanel);
@@ -567,8 +605,17 @@ btnListo.addEventListener('click', () => {
   if(maquinaActual){
     if(!isNaN(valor) && valor > 0){
       estado.cargas[maquinaActual] = valor;
+      if(maquinaActual === 'GAS OIL A TERCEROS'){
+        const nota = panelNota.value.trim();
+        if(nota){
+          estado.notas[maquinaActual] = nota;
+        } else {
+          delete estado.notas[maquinaActual];
+        }
+      }
     } else {
       delete estado.cargas[maquinaActual];
+      delete estado.notas[maquinaActual];
     }
     refrescarListaMaquinas();
   }
@@ -583,20 +630,27 @@ btnGuardar.addEventListener('click', () => {
     return;
   }
 
-  const registros = items.map(maquina => ({
-    usuario: estado.usuario,
-    fecha: estado.fecha,
-    tipoCarga: estado.tipoCarga,
-    tipoMaquina: estado.tipoMaquina,
-    maquina: maquina,
-    litros: estado.cargas[maquina]
-  }));
+  const registros = items.map(maquina => {
+    let nombreMaquina = maquina;
+    if(maquina === 'GAS OIL A TERCEROS' && estado.notas[maquina]){
+      nombreMaquina = `${maquina} - ${estado.notas[maquina]}`;
+    }
+    return {
+      usuario: estado.usuario,
+      fecha: estado.fecha,
+      tipoCarga: estado.tipoCarga,
+      tipoMaquina: estado.tipoMaquina,
+      maquina: nombreMaquina,
+      litros: estado.cargas[maquina]
+    };
+  });
 
   encolarRegistros(registros);
   mostrarToast('✅ Registro guardado correctamente');
 
   // Reiniciar cargas y volver a pantalla 1 para un nuevo registro
   estado.cargas = {};
+  estado.notas = {};
   refrescarListaMaquinas();
   setTimeout(() => {
     pantalla2.classList.remove('activa');
