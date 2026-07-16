@@ -5,11 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Carga de Combustible</title>
 <style>
-  :root{--verde:#2e7d32;--verde-claro:#43a047;--naranja:#ef6c00;--gris:#e0e0e0;--gris-oscuro:#757575;--texto:#212121;--fondo:#f4f6f4;}
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --verde:#2e7d32;
+    --verde-claro:#43a047;
+    --naranja:#ef6c00;
+    --gris:#e0e0e0;
+    --gris-oscuro:#757575;
+    --texto:#212121;
+    --fondo:#f4f6f4;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
   html,body{margin:0;padding:0;}
-  body{font-family:-apple-system,Roboto,Arial,sans-serif;background:var(--fondo);color:var(--texto);min-height:100vh;padding-bottom:90px;}
-  .pantalla{display:none;max-width:520px;margin:0 auto;padding:16px;}
+  body{
+    font-family: -apple-system, Roboto, Arial, sans-serif;
+    background:var(--fondo);
+    color:var(--texto);
+    min-height:100vh;
+    padding-bottom:130px;
+  }
+  .pantalla{display:none; max-width:520px; margin:0 auto; padding:16px;}
   .pantalla.activa{display:block;}
   .header-wrap{position:sticky;top:0;z-index:50;max-width:100%;}
   .header{background:var(--verde);color:#fff;padding:16px;display:flex;align-items:center;justify-content:space-between;}
@@ -20,19 +34,22 @@
   .stock-bar b{font-size:1.15rem;}
   .stock-bajo{color:#ffee58;}
   label{display:block;font-size:1.3rem;font-weight:bold;margin:18px 0 8px 0;}
-  input[type="text"],input[type="date"]{width:100%;font-size:1.5rem;padding:14px;border:2px solid var(--gris);border-radius:12px;background:#fff;color:var(--texto);}
-  input[type="text"]:focus,input[type="date"]:focus{border-color:var(--verde);outline:none;}
+  input[type="text"], input[type="date"]{width:100%;font-size:1.5rem;padding:14px;border:2px solid var(--gris);border-radius:12px;background:#fff;color:var(--texto);}
+  input[type="text"]:focus, input[type="date"]:focus{border-color:var(--verde);outline:none;}
   .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
   .chip{background:#fff;border:2px solid var(--gris);border-radius:20px;padding:8px 16px;font-size:1.1rem;cursor:pointer;}
   .chip.activo{border-color:var(--verde);background:#e8f5e9;font-weight:bold;}
   .opciones{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;}
+  .opciones.una-col{grid-template-columns:1fr;}
   .btn-opcion{font-size:1.3rem;font-weight:bold;padding:20px 10px;border:3px solid var(--gris);border-radius:14px;background:#fff;color:var(--texto);cursor:pointer;text-align:center;transition:all .15s ease;}
   .btn-opcion.seleccionado{border-color:var(--verde);background:var(--verde);color:#fff;}
-  .btn-recarga{border-color:var(--naranja)!important;color:var(--naranja)!important;background:#fff3e0!important;}
+  .btn-recarga{border-color:var(--naranja) !important;color:var(--naranja) !important;background:#fff3e0 !important;}
+  .btn-recarga:active{background:var(--naranja) !important;color:#fff !important;}
   .seccion-recarga{border-top:2px solid var(--gris);margin-top:24px;padding-top:20px;}
   .seccion-recarga label{color:var(--naranja);}
   .hint-recarga{font-size:0.9rem;color:var(--gris-oscuro);text-align:center;margin-top:8px;}
   .btn-principal{width:100%;font-size:1.6rem;font-weight:bold;padding:22px;border:none;border-radius:14px;background:var(--verde);color:#fff;margin-top:30px;cursor:pointer;}
+  .btn-principal:active{background:var(--verde-claro);}
   .error{color:#c62828;font-size:1.1rem;font-weight:bold;margin-top:14px;text-align:center;display:none;}
   .resumen{background:#fff;border-radius:14px;padding:14px 18px;margin:16px 0;font-size:1.15rem;border:2px solid var(--gris);line-height:1.6;}
   .resumen b{color:var(--verde);}
@@ -41,14 +58,15 @@
   .btn-maquina .valor{font-size:1.2rem;font-weight:normal;}
   .btn-maquina.completo{border-color:var(--verde);background:#e8f5e9;}
   .btn-maquina.completo .valor{color:var(--verde);font-weight:bold;}
-  .footer-guardar{position:fixed;bottom:0;left:0;right:0;background:var(--fondo);padding:14px 16px;box-shadow:0 -4px 10px rgba(0,0,0,0.08);z-index:60;}
+  .footer-guardar{position:fixed;bottom:62px;left:0;right:0;background:var(--fondo);padding:10px 16px;box-shadow:0 -4px 10px rgba(0,0,0,0.08);z-index:60;}
   .footer-guardar .max{max-width:520px;margin:0 auto;}
-  .btn-guardar{width:100%;font-size:1.6rem;font-weight:bold;padding:20px;border:none;border-radius:14px;background:var(--naranja);color:#fff;cursor:pointer;}
-  .overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);opacity:0;pointer-events:none;transition:opacity .25s;z-index:100;}
+  .btn-guardar{width:100%;font-size:1.6rem;font-weight:bold;padding:18px;border:none;border-radius:14px;background:var(--naranja);color:#fff;cursor:pointer;}
+  .btn-guardar:active{opacity:0.85;}
+  .overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:100;}
   .overlay.abierto{opacity:1;pointer-events:auto;}
-  .panel{position:fixed;left:0;right:0;bottom:0;background:#fff;border-radius:20px 20px 0 0;padding:24px;transform:translateY(100%);transition:transform .3s;z-index:101;max-width:520px;margin:0 auto;box-shadow:0 -2px 20px rgba(0,0,0,0.2);}
+  .panel{position:fixed;left:0;right:0;bottom:0;background:#fff;border-radius:20px 20px 0 0;padding:24px;transform:translateY(100%);transition:transform .3s ease;z-index:101;max-width:520px;margin:0 auto;box-shadow:0 -2px 20px rgba(0,0,0,0.2);}
   .panel.abierto{transform:translateY(0);}
-  .panel h2{margin:0 0 16px;font-size:1.5rem;text-align:center;color:var(--verde);}
+  .panel h2{margin:0 0 16px 0;font-size:1.5rem;text-align:center;color:var(--verde);}
   .panel h2.titulo-recarga{color:var(--naranja);}
   .panel-input{width:100%;font-size:3.2rem;text-align:center;padding:18px;border:3px solid var(--verde);border-radius:14px;color:var(--texto);margin-bottom:8px;}
   .panel-input.recarga-input{border-color:var(--naranja);}
@@ -56,19 +74,51 @@
   .btn-listo{width:100%;font-size:1.6rem;font-weight:bold;padding:18px;border:none;border-radius:14px;background:var(--verde);color:#fff;cursor:pointer;}
   .btn-listo.btn-listo-recarga{background:var(--naranja);}
   .panel-nota-wrap{margin-bottom:18px;}
+  .panel-nota-wrap label{font-size:1rem;font-weight:bold;margin:0 0 8px 0;}
   #panelNota{width:100%;font-size:1.2rem;padding:12px;border:2px solid var(--gris);border-radius:12px;background:#fff;color:var(--texto);}
-  .toast{position:fixed;top:90px;left:16px;right:16px;max-width:488px;margin:0 auto;background:var(--verde);color:#fff;text-align:center;font-size:1.2rem;font-weight:bold;padding:16px;border-radius:12px;z-index:200;opacity:0;transform:translateY(-20px);transition:all .3s;pointer-events:none;}
+  #panelNota:focus{border-color:var(--verde);outline:none;}
+  .toast{position:fixed;top:90px;left:16px;right:16px;max-width:488px;margin:0 auto;background:var(--verde);color:#fff;text-align:center;font-size:1.2rem;font-weight:bold;padding:16px;border-radius:12px;z-index:200;opacity:0;transform:translateY(-20px);transition:all .3s ease;pointer-events:none;}
   .toast.mostrar{opacity:1;transform:translateY(0);}
   .toast.error-toast{background:#c62828;}
   .toast.aviso-toast{background:var(--naranja);}
+  .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:300;display:none;align-items:center;justify-content:center;padding:24px;}
+  .modal-overlay.abierto{display:flex;}
+  .modal-box{background:#fff;border-radius:20px;padding:30px 24px;max-width:400px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.25);}
+  .modal-icono{font-size:3rem;margin-bottom:12px;}
+  .modal-titulo{font-size:1.4rem;font-weight:bold;color:#c62828;margin-bottom:10px;}
+  .modal-mensaje{font-size:1.1rem;color:var(--gris-oscuro);margin-bottom:24px;line-height:1.5;}
+  .modal-btn{width:100%;font-size:1.3rem;font-weight:bold;padding:16px;border:none;border-radius:12px;background:var(--verde);color:#fff;cursor:pointer;}
   .pendientes{font-size:0.95rem;color:#fff;background:rgba(255,255,255,0.2);border-radius:10px;padding:6px 10px;text-align:center;margin-top:6px;}
+  .tab-bar{position:fixed;bottom:0;left:0;right:0;height:62px;background:#fff;border-top:1px solid var(--gris);display:flex;z-index:70;}
+  .tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:0.75rem;font-weight:bold;color:var(--gris-oscuro);border:none;background:transparent;cursor:pointer;padding:8px 0 6px 0;transition:color .15s;}
+  .tab-btn .tab-icon{font-size:1.5rem;line-height:1;}
+  .tab-btn.activo{color:var(--verde);}
+  #pantalla3{padding-top:16px;}
+  .historial-header{background:var(--verde);color:#fff;padding:16px;text-align:center;}
+  .historial-header h1{font-size:1.4rem;margin:0;}
+  .historial-lista{max-width:520px;margin:0 auto;padding:12px 16px;display:flex;flex-direction:column;gap:10px;}
+  .historial-vacio{text-align:center;color:var(--gris-oscuro);font-size:1.2rem;margin-top:40px;padding:0 24px;}
+  .historial-card{background:#fff;border-radius:14px;border:2px solid var(--gris);padding:14px 16px;font-size:1rem;line-height:1.6;}
+  .historial-card .hc-fecha{font-size:0.85rem;color:var(--gris-oscuro);margin-bottom:4px;}
+  .historial-card .hc-maquina{font-size:1.2rem;font-weight:bold;color:var(--texto);}
+  .historial-card .hc-detalle{font-size:1rem;color:var(--gris-oscuro);margin-top:2px;}
+  .historial-card .hc-litros{font-size:1.3rem;font-weight:bold;color:var(--verde);float:right;margin-top:-2px;}
+  .historial-card.tipo-aceite .hc-litros{color:var(--naranja);}
+  .hc-top{display:flex;justify-content:space-between;align-items:flex-start;}
 </style>
 </head>
 <body>
 <div class="pantalla activa" id="pantalla1">
   <div class="header-wrap">
-    <div class="header"><div class="header-spacer"></div><h1>🚜 Carga de Combustible</h1><div class="header-spacer"></div></div>
-    <div class="stock-bar"><span>⛽ Gasoil: <b class="stock-gasoil-val">500</b> lts</span><span>🛢️ Aceite: <b class="stock-aceite-val">500</b> lts</span></div>
+    <div class="header">
+      <div class="header-spacer"></div>
+      <h1>🚜 Carga de Combustible</h1>
+      <div class="header-spacer"></div>
+    </div>
+    <div class="stock-bar">
+      <span>⛽ Gasoil: <b class="stock-gasoil-val">500</b> lts</span>
+      <span>🛢️ Aceite: <b class="stock-aceite-val">500</b> lts</span>
+    </div>
   </div>
   <div style="padding:0 16px;">
     <label for="usuario">Nombre de quien registra</label>
@@ -93,8 +143,8 @@
     <div class="seccion-recarga">
       <label>Recarga de stock</label>
       <div class="opciones">
-        <button class="btn-opcion btn-recarga" id="btnRecargarGasoil">⬆️ Recargar<br>Gasoil</button>
-        <button class="btn-opcion btn-recarga" id="btnRecargarAceite">⬆️ Recargar<br>Aceite</button>
+        <button class="btn-opcion btn-recarga" id="btnRecargarGasoil" data-combustible="Gasoil">⬆️ Recargar<br>Gasoil</button>
+        <button class="btn-opcion btn-recarga" id="btnRecargarAceite" data-combustible="Aceite">⬆️ Recargar<br>Aceite</button>
       </div>
       <p class="hint-recarga">Completá tu nombre y la fecha antes de recargar.</p>
     </div>
@@ -102,17 +152,40 @@
 </div>
 <div class="pantalla" id="pantalla2">
   <div class="header-wrap">
-    <div class="header"><button class="btn-volver" id="btnVolver">← Volver</button><h1>Equipos</h1><div class="header-spacer"></div></div>
-    <div class="stock-bar"><span>⛽ Gasoil: <b class="stock-gasoil-val">500</b> lts</span><span>🛢️ Aceite: <b class="stock-aceite-val">500</b> lts</span></div>
+    <div class="header">
+      <button class="btn-volver" id="btnVolver">← Volver</button>
+      <h1>Equipos</h1>
+      <div class="header-spacer"></div>
+    </div>
+    <div class="stock-bar">
+      <span>⛽ Gasoil: <b class="stock-gasoil-val">500</b> lts</span>
+      <span>🛢️ Aceite: <b class="stock-aceite-val">500</b> lts</span>
+    </div>
   </div>
   <div style="padding:0 16px;">
     <div class="resumen" id="resumenSeleccion"></div>
     <div class="maquinas" id="listaMaquinas"></div>
   </div>
-  <div class="footer-guardar"><div class="max">
-    <button class="btn-guardar" id="btnGuardar">💾 Guardar Registro</button>
-    <div class="pendientes" id="pendientesInfo" style="display:none;background:#fdecea;color:#c62828;"></div>
-  </div></div>
+  <div class="footer-guardar">
+    <div class="max">
+      <button class="btn-guardar" id="btnGuardar">💾 Guardar Registro</button>
+      <div class="pendientes" id="pendientesInfo" style="display:none;background:#fdecea;color:#c62828;"></div>
+    </div>
+  </div>
+</div>
+<div class="pantalla" id="pantalla3">
+  <div class="header-wrap">
+    <div class="historial-header"><h1>📖 Historial de cargas</h1></div>
+  </div>
+  <div class="historial-lista" id="historialLista"></div>
+</div>
+<div class="tab-bar">
+  <button class="tab-btn activo" id="tabNueva" onclick="activarTab('nueva')">
+    <span class="tab-icon">📋</span>Nueva carga
+  </button>
+  <button class="tab-btn" id="tabHistorial" onclick="activarTab('historial')">
+    <span class="tab-icon">📖</span>Historial
+  </button>
 </div>
 <div class="overlay" id="overlay"></div>
 <div class="panel" id="panelLitros">
@@ -125,47 +198,88 @@
   </div>
   <button class="btn-listo" id="btnListo">✓ Listo</button>
 </div>
+<div class="modal-overlay" id="modalDuplicado">
+  <div class="modal-box">
+    <div class="modal-icono">⛔</div>
+    <div class="modal-titulo">Carga duplicada</div>
+    <div class="modal-mensaje" id="modalDuplicadoMensaje">No puede cargar combustible en la misma máquina</div>
+    <button class="modal-btn" onclick="cerrarModalDuplicado()">Entendido</button>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <script>
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbzt_CTqitOCqjm08MGxUUB6KZAnCm1sAzUVVeM2nUZ2ae4z7A_U0TV3WHiKRknu7ynj/exec";
-const MAQUINAS={"Tractores":["JD 6165","JD 6115","JD 5085","JD 5080","MASEY 650","FIAT 780 NARANJA","FIAT 780 MARRON","FHAR 45 ROJO","FHAR 30 VERDE"],"Pulverizadora":["PLA 2909"],"Cosechadora":["DON ROQUE 150","VASSALLI 910"],"Vehículo":["TOYOTA HILUX","MULA MITSUBISHI","GENERADOR TAMBO","GAS OIL QUEMA","GAS OIL A TERCEROS"]};
-let estado={usuario:"",fecha:"",tipoCarga:"",tipoMaquina:"",cargas:{},notas:{}},maquinaActual=null,panelModo="maquina",combustibleRecarga="";
-const p1=document.getElementById("pantalla1"),p2=document.getElementById("pantalla2"),iU=document.getElementById("usuario"),iF=document.getElementById("fecha"),cU=document.getElementById("chipsUsuarios"),oTC=document.getElementById("opcionesTipoCarga"),oTM=document.getElementById("opcionesTipoMaquina"),eP1=document.getElementById("errorPantalla1"),bCont=document.getElementById("btnContinuar"),bVolver=document.getElementById("btnVolver"),rSel=document.getElementById("resumenSeleccion"),lMaq=document.getElementById("listaMaquinas"),bGuardar=document.getElementById("btnGuardar"),overlay=document.getElementById("overlay"),panel=document.getElementById("panelLitros"),pTit=document.getElementById("panelTitulo"),pInp=document.getElementById("panelInput"),pNW=document.getElementById("panelNotaWrap"),pNota=document.getElementById("panelNota"),bListo=document.getElementById("btnListo"),toast=document.getElementById("toast"),pInfo=document.getElementById("pendientesInfo");
-function getStock(){const g=parseFloat(localStorage.getItem("stock_gasoil")),a=parseFloat(localStorage.getItem("stock_aceite"));return{gasoil:isNaN(g)?500:g,aceite:isNaN(a)?500:a};}
-function setStock(g,a){localStorage.setItem("stock_gasoil",g);localStorage.setItem("stock_aceite",a);updStock();}
-function updStock(){const s=getStock();document.querySelectorAll(".stock-gasoil-val").forEach(e=>{e.textContent=rd(s.gasoil);e.classList.toggle("stock-bajo",s.gasoil<=50);});document.querySelectorAll(".stock-aceite-val").forEach(e=>{e.textContent=rd(s.aceite);e.classList.toggle("stock-bajo",s.aceite<=50);});}
-function rd(n){return Math.round(n*10)/10;}
-updStock();
-function hoy(){const d=new Date(),m=String(d.getMonth()+1).padStart(2,"0"),dd=String(d.getDate()).padStart(2,"0");return d.getFullYear()+"-"+m+"-"+dd;}
-iF.value=hoy();
-function loadUsers(){const l=JSON.parse(localStorage.getItem("usuarios_recientes")||"[]");cU.innerHTML="";l.forEach(n=>{const c=document.createElement("div");c.className="chip";c.textContent=n;c.addEventListener("click",()=>{iU.value=n;markChip(n);});cU.appendChild(c);});}
-function markChip(n){document.querySelectorAll("#chipsUsuarios .chip").forEach(c=>c.classList.toggle("activo",c.textContent===n));}
-function saveUser(n){let l=JSON.parse(localStorage.getItem("usuarios_recientes")||"[]");l=l.filter(x=>x.toLowerCase()!==n.toLowerCase());l.unshift(n);l=l.slice(0,5);localStorage.setItem("usuarios_recientes",JSON.stringify(l));loadUsers();markChip(n);}
-loadUsers();
-function selUnica(cont,campo){cont.querySelectorAll(".btn-opcion").forEach(b=>{b.addEventListener("click",()=>{cont.querySelectorAll(".btn-opcion").forEach(x=>x.classList.remove("seleccionado"));b.classList.add("seleccionado");estado[campo]=b.dataset.valor;});});}
-selUnica(oTC,"tipoCarga");selUnica(oTM,"tipoMaquina");
-bCont.addEventListener("click",()=>{estado.usuario=iU.value.trim();estado.fecha=iF.value;if(!estado.usuario||!estado.fecha||!estado.tipoCarga||!estado.tipoMaquina){eP1.style.display="block";return;}eP1.style.display="none";saveUser(estado.usuario);if(estado.tipoMaquinaAnterior!==estado.tipoMaquina){estado.cargas={};estado.notas={};}estado.tipoMaquinaAnterior=estado.tipoMaquina;showP2();});
-document.getElementById("btnRecargarGasoil").addEventListener("click",()=>openRecarga("Gasoil"));
-document.getElementById("btnRecargarAceite").addEventListener("click",()=>openRecarga("Aceite"));
-function openRecarga(comb){if(!iU.value.trim()||!iF.value){showToast("Completá tu nombre y la fecha antes de recargar.",true);return;}panelModo="recarga";combustibleRecarga=comb;pTit.textContent="⬆️ Recargar "+comb;pTit.className="titulo-recarga";pInp.value="";pInp.className="panel-input recarga-input";pNW.style.display="none";bListo.textContent="✓ Confirmar recarga";bListo.className="btn-listo btn-listo-recarga";overlay.classList.add("abierto");panel.classList.add("abierto");setTimeout(()=>pInp.focus(),200);}
-function showP2(){rSel.innerHTML="👤 <b>"+esc(estado.usuario)+"</b><br>📅 <b>"+fmtFecha(estado.fecha)+"</b><br>"+(estado.tipoCarga==="Gasoil"?"⛽":"🛢️")+" <b>"+estado.tipoCarga+"</b> | "+icoMaq(estado.tipoMaquina)+" <b>"+estado.tipoMaquina+"</b>";lMaq.innerHTML="";(MAQUINAS[estado.tipoMaquina]||[]).forEach(n=>{const b=document.createElement("button");b.className="btn-maquina";b.dataset.maquina=n;updMaq(b,n);b.addEventListener("click",()=>openPanel(n));lMaq.appendChild(b);});p1.classList.remove("activa");p2.classList.add("activa");window.scrollTo(0,0);}
-function icoMaq(t){return{Tractores:"🚜",Pulverizadora:"🌾",Cosechadora:"🌽","Vehículo":"🚗"}[t]||"";}
-function updMaq(b,n){const l=estado.cargas[n];if(l!==undefined){b.classList.add("completo");let e=n;if(n==="GAS OIL A TERCEROS"&&estado.notas[n])e+=" ("+estado.notas[n]+")";b.innerHTML="<span>"+esc(e)+"</span><span class='valor'>✓ "+l+" L</span>";}else{b.classList.remove("completo");b.innerHTML="<span>"+esc(n)+"</span><span class='valor'></span>";}}
-function refreshMaq(){lMaq.querySelectorAll(".btn-maquina").forEach(b=>updMaq(b,b.dataset.maquina));}
-bVolver.addEventListener("click",()=>{p2.classList.remove("activa");p1.classList.add("activa");window.scrollTo(0,0);});
-function openPanel(n){panelModo="maquina";maquinaActual=n;pTit.textContent=n;pTit.className="";pInp.value=estado.cargas[n]!==undefined?estado.cargas[n]:"";pInp.className="panel-input";bListo.textContent="✓ Listo";bListo.className="btn-listo";pNW.style.display=n==="GAS OIL A TERCEROS"?"block":"none";pNota.value=n==="GAS OIL A TERCEROS"?(estado.notas[n]||""):"";overlay.classList.add("abierto");panel.classList.add("abierto");setTimeout(()=>pInp.focus(),200);}
-function closePanel(){overlay.classList.remove("abierto");panel.classList.remove("abierto");pInp.blur();pNota.blur();maquinaActual=null;panelModo="maquina";}
-overlay.addEventListener("click",closePanel);
-bListo.addEventListener("click",()=>{const v=parseFloat(pInp.value);if(panelModo==="recarga"){if(isNaN(v)||v<=0){showToast("Ingresá una cantidad válida.",true);return;}const s=getStock();if(combustibleRecarga==="Gasoil")setStock(s.gasoil+v,s.aceite);else setStock(s.gasoil,s.aceite+v);queueMov([{usuario:iU.value.trim()||"Sin nombre",fecha:iF.value,tipo:"Recarga",combustible:combustibleRecarga,litros:v}]);closePanel();showToast("✅ Se sumaron "+v+" lts al stock de "+combustibleRecarga);return;}if(maquinaActual){if(!isNaN(v)&&v>0){estado.cargas[maquinaActual]=v;if(maquinaActual==="GAS OIL A TERCEROS"){const nota=pNota.value.trim();if(nota)estado.notas[maquinaActual]=nota;else delete estado.notas[maquinaActual];};}else{delete estado.cargas[maquinaActual];delete estado.notas[maquinaActual];}refreshMaq();}closePanel();});
-bGuardar.addEventListener("click",()=>{const items=Object.keys(estado.cargas);if(!items.length){showToast("Cargá los litros de al menos un equipo.",true);return;}const regs=items.map(m=>{let nm=m;if(m==="GAS OIL A TERCEROS"&&estado.notas[m])nm+="-"+estado.notas[m];return{usuario:estado.usuario,fecha:estado.fecha,tipoCarga:estado.tipoCarga,tipoMaquina:estado.tipoMaquina,maquina:nm,litros:estado.cargas[m]};});const movs=items.map(m=>({usuario:estado.usuario,fecha:estado.fecha,tipo:"Consumo",combustible:estado.tipoCarga,litros:estado.cargas[m]}));const total=items.reduce((s,m)=>s+estado.cargas[m],0),sk=getStock();let sr;if(estado.tipoCarga==="Gasoil"){sr=sk.gasoil-total;setStock(sr,sk.aceite);}else{sr=sk.aceite-total;setStock(sk.gasoil,sr);}queueRegMov(regs,movs);if(sr<=0)showToast("⚠️ Stock insuficiente — se guardó el registro de todas formas",false,true);else showToast("✅ Registro guardado correctamente");estado.cargas={};estado.notas={};refreshMaq();setTimeout(()=>{p2.classList.remove("activa");p1.classList.add("activa");window.scrollTo(0,0);},1200);});
-function queueRegMov(regs,movs){let pr=JSON.parse(localStorage.getItem("pendientes_envio")||"[]");pr=pr.concat(regs);localStorage.setItem("pendientes_envio",JSON.stringify(pr));let pm=JSON.parse(localStorage.getItem("pendientes_movimientos")||"[]");pm=pm.concat(movs);localStorage.setItem("pendientes_movimientos",JSON.stringify(pm));updPend();sync();}
-function queueMov(movs){let pm=JSON.parse(localStorage.getItem("pendientes_movimientos")||"[]");pm=pm.concat(movs);localStorage.setItem("pendientes_movimientos",JSON.stringify(pm));updPend();sync();}
-function sync(){const pr=JSON.parse(localStorage.getItem("pendientes_envio")||"[]"),pm=JSON.parse(localStorage.getItem("pendientes_movimientos")||"[]");if(!pr.length&&!pm.length)return;fetch(SCRIPT_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({registros:pr,movimientos:pm})}).then(r=>r.json()).then(res=>{if(res&&res.status==="ok"){localStorage.setItem("pendientes_envio","[]");localStorage.setItem("pendientes_movimientos","[]");updPend();}}).catch(()=>{});}
-function updPend(){const pr=JSON.parse(localStorage.getItem("pendientes_envio")||"[]"),pm=JSON.parse(localStorage.getItem("pendientes_movimientos")||"[]"),t=pr.length+pm.length;if(t>0){pInfo.style.display="block";pInfo.textContent="⏳ "+t+" elemento(s) sin sincronizar.";}else pInfo.style.display="none";}
-updPend();sync();window.addEventListener("online",sync);
-function showToast(msg,isErr,isWarn){toast.textContent=msg;toast.classList.toggle("error-toast",!!isErr);toast.classList.toggle("aviso-toast",!!isWarn&&!isErr);toast.classList.add("mostrar");setTimeout(()=>toast.classList.remove("mostrar"),isWarn?3500:2500);}
-function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML;}
-function fmtFecha(iso){if(!iso)return"";const[a,m,d]=iso.split("-");return d+"/"+m+"/"+a;}
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzt_CTqitOCqjm08MGxUUB6KZAnCm1sAzUVVeM2nUZ2ae4z7A_U0TV3WHiKRknu7ynj/exec";
+const MAQUINAS = {
+  "Tractores": ["JD 6165","JD 6115","JD 5085","JD 5080","MASEY 650","FIAT 780 NARANJA","FIAT 780 MARRON","FHAR 45 ROJO","FHAR 30 VERDE"],
+  "Pulverizadora": ["PLA 2909"],
+  "Cosechadora": ["DON ROQUE 150","VASSALLI 910"],
+  "Vehículo": ["TOYOTA HILUX","MULA MITSUBISHI","GENERADOR TAMBO","GAS OIL QUEMA","GAS OIL A TERCEROS"]
+};
+let estado = {usuario:"",fecha:"",tipoCarga:"",tipoMaquina:"",cargas:{},notas:{}};
+let maquinaActual = null, panelModo = 'maquina', combustibleRecarga = '';
+const pantalla1=document.getElementById('pantalla1'),pantalla2=document.getElementById('pantalla2'),pantalla3=document.getElementById('pantalla3');
+const inputUsuario=document.getElementById('usuario'),inputFecha=document.getElementById('fecha'),chipsUsuarios=document.getElementById('chipsUsuarios');
+const opcionesTipoCarga=document.getElementById('opcionesTipoCarga'),opcionesTipoMaquina=document.getElementById('opcionesTipoMaquina');
+const errorPantalla1=document.getElementById('errorPantalla1'),btnContinuar=document.getElementById('btnContinuar'),btnVolver=document.getElementById('btnVolver');
+const resumenSeleccion=document.getElementById('resumenSeleccion'),listaMaquinas=document.getElementById('listaMaquinas'),btnGuardar=document.getElementById('btnGuardar');
+const overlay=document.getElementById('overlay'),panelLitros=document.getElementById('panelLitros'),panelTitulo=document.getElementById('panelTitulo');
+const panelInput=document.getElementById('panelInput'),panelNotaWrap=document.getElementById('panelNotaWrap'),panelNota=document.getElementById('panelNota');
+const btnListo=document.getElementById('btnListo'),toast=document.getElementById('toast'),pendientesInfo=document.getElementById('pendientesInfo');
+const historialLista=document.getElementById('historialLista'),modalDuplicado=document.getElementById('modalDuplicado'),modalDuplicadoMensaje=document.getElementById('modalDuplicadoMensaje');
+let tabActual='nueva';
+function activarTab(tab){
+  tabActual=tab;
+  document.getElementById('tabNueva').classList.toggle('activo',tab==='nueva');
+  document.getElementById('tabHistorial').classList.toggle('activo',tab==='historial');
+  if(tab==='nueva'){pantalla3.classList.remove('activa');if(!pantalla2.classList.contains('activa'))pantalla1.classList.add('activa');}
+  else{pantalla1.classList.remove('activa');pantalla2.classList.remove('activa');pantalla3.classList.add('activa');renderizarHistorial();}
+}
+function getStock(){const g=parseFloat(localStorage.getItem('stock_gasoil')),a=parseFloat(localStorage.getItem('stock_aceite'));return{gasoil:isNaN(g)?500:g,aceite:isNaN(a)?500:a};}
+function setStock(g,a){localStorage.setItem('stock_gasoil',g.toString());localStorage.setItem('stock_aceite',a.toString());actualizarStockDisplay();}
+function actualizarStockDisplay(){const s=getStock();document.querySelectorAll('.stock-gasoil-val').forEach(el=>{el.textContent=redondear(s.gasoil);el.classList.toggle('stock-bajo',s.gasoil<=50);});document.querySelectorAll('.stock-aceite-val').forEach(el=>{el.textContent=redondear(s.aceite);el.classList.toggle('stock-bajo',s.aceite<=50);});}
+function redondear(n){return Math.round(n*10)/10;}
+actualizarStockDisplay();
+const HISTORIAL_KEY='historial_cargas',MAX_HISTORIAL=100;
+function obtenerHistorial(){return JSON.parse(localStorage.getItem(HISTORIAL_KEY)||'[]');}
+function guardarEnHistorial(registros){let hist=obtenerHistorial();const ahora=Date.now();const nuevos=registros.map(r=>({...r,timestamp:ahora}));hist=nuevos.concat(hist).slice(0,MAX_HISTORIAL);localStorage.setItem(HISTORIAL_KEY,JSON.stringify(hist));}
+const OCHO_HORAS_MS=8*60*60*1000;
+function verificarDuplicado(maquina,tipoCarga){const hist=obtenerHistorial(),ahora=Date.now();return hist.find(r=>r.maquina===maquina&&r.tipoCarga===tipoCarga&&(ahora-r.timestamp)<OCHO_HORAS_MS)||null;}
+function mostrarModalDuplicado(maquina,registro){const hace=tiempoTranscurrido(registro.timestamp);modalDuplicadoMensaje.textContent='No puede cargar combustible en la misma máquina.\n\n"'+maquina+'" ya fue cargada hace '+hace+' por '+registro.usuario+'.';modalDuplicado.classList.add('abierto');}
+function cerrarModalDuplicado(){modalDuplicado.classList.remove('abierto');}
+function tiempoTranscurrido(timestamp){const mins=Math.floor((Date.now()-timestamp)/60000);if(mins<60)return mins+' minuto'+(mins!==1?'s':'');const hs=Math.floor(mins/60),rm=mins%60;if(rm===0)return hs+' hora'+(hs!==1?'s':'');return hs+' h '+rm+' min';}
+function renderizarHistorial(){const hist=obtenerHistorial().slice(0,20);historialLista.innerHTML='';if(hist.length===0){historialLista.innerHTML='<div class="historial-vacio">📭 Todavía no hay registros guardados.</div>';return;}hist.forEach(r=>{const card=document.createElement('div');card.className='historial-card'+(r.tipoCarga==='Aceite'?' tipo-aceite':'');const iconoCarga=r.tipoCarga==='Gasoil'?'⛽':'🛢️';card.innerHTML='<div class="hc-fecha">'+formatearFechaHora(r.timestamp)+' · '+escapeHTML(r.usuario)+'</div><div class="hc-top"><div><div class="hc-maquina">'+escapeHTML(r.maquina)+'</div><div class="hc-detalle">'+iconoCarga+' '+escapeHTML(r.tipoCarga)+' · '+escapeHTML(r.tipoMaquina)+'</div></div><div class="hc-litros">'+r.litros+' L</div></div>';historialLista.appendChild(card);});}
+function formatearFechaHora(ts){if(!ts)return'';const d=new Date(ts);return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+function hoyISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+inputFecha.value=hoyISO();
+function cargarUsuariosRecientes(){const lista=JSON.parse(localStorage.getItem('usuarios_recientes')||'[]');chipsUsuarios.innerHTML='';lista.forEach(nombre=>{const chip=document.createElement('div');chip.className='chip';chip.textContent=nombre;chip.addEventListener('click',()=>{inputUsuario.value=nombre;marcarChipActivo(nombre);});chipsUsuarios.appendChild(chip);});}
+function marcarChipActivo(nombre){document.querySelectorAll('#chipsUsuarios .chip').forEach(c=>{c.classList.toggle('activo',c.textContent===nombre);});}
+function guardarUsuarioReciente(nombre){let lista=JSON.parse(localStorage.getItem('usuarios_recientes')||'[]');lista=lista.filter(n=>n.toLowerCase()!==nombre.toLowerCase());lista.unshift(nombre);lista=lista.slice(0,5);localStorage.setItem('usuarios_recientes',JSON.stringify(lista));cargarUsuariosRecientes();marcarChipActivo(nombre);}
+cargarUsuariosRecientes();
+function configurarSeleccionUnica(contenedor,campoEstado){contenedor.querySelectorAll('.btn-opcion').forEach(btn=>{btn.addEventListener('click',()=>{contenedor.querySelectorAll('.btn-opcion').forEach(b=>b.classList.remove('seleccionado'));btn.classList.add('seleccionado');estado[campoEstado]=btn.dataset.valor;});});}
+configurarSeleccionUnica(opcionesTipoCarga,'tipoCarga');
+configurarSeleccionUnica(opcionesTipoMaquina,'tipoMaquina');
+btnContinuar.addEventListener('click',()=>{estado.usuario=inputUsuario.value.trim();estado.fecha=inputFecha.value;if(!estado.usuario||!estado.fecha||!estado.tipoCarga||!estado.tipoMaquina){errorPantalla1.style.display='block';return;}errorPantalla1.style.display='none';guardarUsuarioReciente(estado.usuario);if(estado.tipoMaquinaAnterior!==estado.tipoMaquina){estado.cargas={};estado.notas={};}estado.tipoMaquinaAnterior=estado.tipoMaquina;mostrarPantalla2();});
+document.getElementById('btnRecargarGasoil').addEventListener('click',()=>abrirPanelRecarga('Gasoil'));
+document.getElementById('btnRecargarAceite').addEventListener('click',()=>abrirPanelRecarga('Aceite'));
+function abrirPanelRecarga(combustible){const usuario=inputUsuario.value.trim(),fecha=inputFecha.value;if(!usuario||!fecha){mostrarToast('Completá tu nombre y la fecha antes de recargar.',true);return;}panelModo='recarga';combustibleRecarga=combustible;panelTitulo.textContent='⬆️ Recargar '+combustible;panelTitulo.className='titulo-recarga';panelInput.value='';panelInput.className='panel-input recarga-input';panelNotaWrap.style.display='none';btnListo.textContent='✓ Confirmar recarga';btnListo.className='btn-listo btn-listo-recarga';overlay.classList.add('abierto');panelLitros.classList.add('abierto');setTimeout(()=>panelInput.focus(),200);}
+function mostrarPantalla2(){resumenSeleccion.innerHTML='👤 <b>'+escapeHTML(estado.usuario)+'</b><br>📅 <b>'+formatearFecha(estado.fecha)+'</b><br>'+(estado.tipoCarga==='Gasoil'?'⛽':'🛢️')+' <b>'+estado.tipoCarga+'</b> &nbsp;|&nbsp; '+iconoMaquina(estado.tipoMaquina)+' <b>'+estado.tipoMaquina+'</b>';listaMaquinas.innerHTML='';(MAQUINAS[estado.tipoMaquina]||[]).forEach(nombre=>{const btn=document.createElement('button');btn.className='btn-maquina';btn.dataset.maquina=nombre;actualizarBotonMaquina(btn,nombre);btn.addEventListener('click',()=>abrirPanel(nombre));listaMaquinas.appendChild(btn);});pantalla1.classList.remove('activa');pantalla3.classList.remove('activa');pantalla2.classList.add('activa');window.scrollTo(0,0);}
+function iconoMaquina(tipo){return{Tractores:'🚜',Pulverizadora:'🌾',Cosechadora:'🌽','Vehículo':'🚗'}[tipo]||'';}
+function actualizarBotonMaquina(btn,nombre){const litros=estado.cargas[nombre];if(litros!==undefined){btn.classList.add('completo');let etiqueta=nombre;if(nombre==='GAS OIL A TERCEROS'&&estado.notas[nombre])etiqueta+=' ('+estado.notas[nombre]+')';btn.innerHTML='<span>'+escapeHTML(etiqueta)+'</span><span class="valor">✓ '+litros+' L</span>';}else{btn.classList.remove('completo');btn.innerHTML='<span>'+escapeHTML(nombre)+'</span><span class="valor"></span>';}}
+function refrescarListaMaquinas(){listaMaquinas.querySelectorAll('.btn-maquina').forEach(btn=>actualizarBotonMaquina(btn,btn.dataset.maquina));}
+btnVolver.addEventListener('click',()=>{pantalla2.classList.remove('activa');pantalla1.classList.add('activa');window.scrollTo(0,0);});
+function abrirPanel(nombreMaquina){panelModo='maquina';maquinaActual=nombreMaquina;panelTitulo.textContent=nombreMaquina;panelTitulo.className='';panelInput.value=estado.cargas[nombreMaquina]!==undefined?estado.cargas[nombreMaquina]:'';panelInput.className='panel-input';btnListo.textContent='✓ Listo';btnListo.className='btn-listo';if(nombreMaquina==='GAS OIL A TERCEROS'){panelNotaWrap.style.display='block';panelNota.value=estado.notas[nombreMaquina]||'';}else{panelNotaWrap.style.display='none';panelNota.value='';}overlay.classList.add('abierto');panelLitros.classList.add('abierto');setTimeout(()=>panelInput.focus(),200);}
+function cerrarPanel(){overlay.classList.remove('abierto');panelLitros.classList.remove('abierto');panelInput.blur();panelNota.blur();maquinaActual=null;panelModo='maquina';}
+overlay.addEventListener('click',cerrarPanel);
+btnListo.addEventListener('click',()=>{const valor=parseFloat(panelInput.value);if(panelModo==='recarga'){if(isNaN(valor)||valor<=0){mostrarToast('Ingresá una cantidad válida de litros.',true);return;}const usuario=inputUsuario.value.trim()||'Sin nombre',fecha=inputFecha.value,s=getStock();if(combustibleRecarga==='Gasoil')setStock(s.gasoil+valor,s.aceite);else setStock(s.gasoil,s.aceite+valor);encolarMovimientos([{usuario,fecha,tipo:'Recarga',combustible:combustibleRecarga,litros:valor}]);cerrarPanel();mostrarToast('✅ Se sumaron '+valor+' lts al stock de '+combustibleRecarga);return;}if(maquinaActual){if(!isNaN(valor)&&valor>0){estado.cargas[maquinaActual]=valor;if(maquinaActual==='GAS OIL A TERCEROS'){const nota=panelNota.value.trim();if(nota)estado.notas[maquinaActual]=nota;else delete estado.notas[maquinaActual];}}else{delete estado.cargas[maquinaActual];delete estado.notas[maquinaActual];}refrescarListaMaquinas();}cerrarPanel();});
+btnGuardar.addEventListener('click',()=>{const items=Object.keys(estado.cargas);if(items.length===0){mostrarToast('Cargá los litros de al menos un equipo antes de guardar.',true);return;}for(const maquina of items){const dup=verificarDuplicado(maquina,estado.tipoCarga);if(dup){mostrarModalDuplicado(maquina,dup);return;}}const registros=items.map(maquina=>{let nombreMaquina=maquina;if(maquina==='GAS OIL A TERCEROS'&&estado.notas[maquina])nombreMaquina=maquina+' - '+estado.notas[maquina];return{usuario:estado.usuario,fecha:estado.fecha,tipoCarga:estado.tipoCarga,tipoMaquina:estado.tipoMaquina,maquina:nombreMaquina,litros:estado.cargas[maquina]};});guardarEnHistorial(registros);const movimientos=items.map(maquina=>({usuario:estado.usuario,fecha:estado.fecha,tipo:'Consumo',combustible:estado.tipoCarga,litros:estado.cargas[maquina]}));const totalLitros=items.reduce((sum,m)=>sum+estado.cargas[m],0),s=getStock();let stockResultante;if(estado.tipoCarga==='Gasoil'){stockResultante=s.gasoil-totalLitros;setStock(stockResultante,s.aceite);}else{stockResultante=s.aceite-totalLitros;setStock(s.gasoil,stockResultante);}encolarRegistrosYMovimientos(registros,movimientos);if(stockResultante<=0)mostrarToast('⚠️ Stock insuficiente — se guardó el registro de todas formas',false,true);else mostrarToast('✅ Registro guardado correctamente');estado.cargas={};estado.notas={};refrescarListaMaquinas();setTimeout(()=>{pantalla2.classList.remove('activa');pantalla1.classList.add('activa');window.scrollTo(0,0);},1200);});
+function encolarRegistrosYMovimientos(registros,movimientos){let pr=JSON.parse(localStorage.getItem('pendientes_envio')||'[]');pr=pr.concat(registros);localStorage.setItem('pendientes_envio',JSON.stringify(pr));let pm=JSON.parse(localStorage.getItem('pendientes_movimientos')||'[]');pm=pm.concat(movimientos);localStorage.setItem('pendientes_movimientos',JSON.stringify(pm));actualizarIndicadorPendientes();intentarSincronizar();}
+function encolarMovimientos(movimientos){let pm=JSON.parse(localStorage.getItem('pendientes_movimientos')||'[]');pm=pm.concat(movimientos);localStorage.setItem('pendientes_movimientos',JSON.stringify(pm));actualizarIndicadorPendientes();intentarSincronizar();}
+function intentarSincronizar(){const pr=JSON.parse(localStorage.getItem('pendientes_envio')||'[]'),pm=JSON.parse(localStorage.getItem('pendientes_movimientos')||'[]');if(pr.length===0&&pm.length===0)return;if(!SCRIPT_URL||SCRIPT_URL.indexOf('PEGAR_AQUI')!==-1)return;fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({registros:pr,movimientos:pm})}).then(r=>r.json()).then(res=>{if(res&&res.status==='ok'){localStorage.setItem('pendientes_envio','[]');localStorage.setItem('pendientes_movimientos','[]');actualizarIndicadorPendientes();}}).catch(()=>{});}
+function actualizarIndicadorPendientes(){const pr=JSON.parse(localStorage.getItem('pendientes_envio')||'[]'),pm=JSON.parse(localStorage.getItem('pendientes_movimientos')||'[]'),total=pr.length+pm.length;if(total>0){pendientesInfo.style.display='block';pendientesInfo.textContent='⏳ '+total+' elemento(s) sin sincronizar. Se enviarán solos cuando haya conexión.';}else pendientesInfo.style.display='none';}
+actualizarIndicadorPendientes();intentarSincronizar();window.addEventListener('online',intentarSincronizar);
+function mostrarToast(mensaje,esError,esAviso){toast.textContent=mensaje;toast.classList.toggle('error-toast',!!esError);toast.classList.toggle('aviso-toast',!!esAviso&&!esError);toast.classList.add('mostrar');setTimeout(()=>toast.classList.remove('mostrar'),esAviso?3500:2500);}
+function escapeHTML(str){const div=document.createElement('div');div.textContent=str;return div.innerHTML;}
+function formatearFecha(iso){if(!iso)return'';const[a,m,d]=iso.split('-');return d+'/'+m+'/'+a;}
 </script>
 </body>
 </html>
